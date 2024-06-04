@@ -1,0 +1,36 @@
+name: CI to Docker Hub
+on:
+  push:
+    branches: [ main ]
+    
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    
+      - name: Check Out Repo 
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Docker Build & Push Action - typescript
+        uses: mr-smithers-excellent/docker-build-push@v6.3
+        with:
+            image: ${{ secrets.DOCKER_HUB_USERNAME }}/cdk8s
+            tags:  latest, typescript, typescript-latest, typescript-$(date +%s)
+            registry: docker.io
+            dockerfile: Dockerfile.typescript
+            username: ${{ secrets.DOCKER_HUB_USERNAME }}
+            password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Docker Build & Push Action - python
+        uses: mr-smithers-excellent/docker-build-push@v6.3
+        with:
+            image: ${{ secrets.DOCKER_HUB_USERNAME }}/cdk8s
+            tags:  python, python-latest, python-$(date +%s)
+            registry: docker.io
+            dockerfile: Dockerfile.python
+            username: ${{ secrets.DOCKER_HUB_USERNAME }}
+            password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+            
